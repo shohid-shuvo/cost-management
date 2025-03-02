@@ -115,8 +115,8 @@ const Home = () => {
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Combined Data</h2>
 
-      <form onSubmit={handleSubmit} className="mb-4">
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="uni-indput mb-4">
+        <div className=" grid grid-cols-5 gap-[10px] ">
           <div>
             <label className="block text-sm font-medium mb-1">Subject</label>
             <select
@@ -180,16 +180,18 @@ const Home = () => {
               ))}
             </select>
           </div>
+          <div className="flex items-center">
+            <button
+              type="submit"
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Add Expense
+            </button>
+          </div>
         </div>
-        <button
-          type="submit"
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Add Expense
-        </button>
       </form>
 
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="uni_table w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Subject</th>

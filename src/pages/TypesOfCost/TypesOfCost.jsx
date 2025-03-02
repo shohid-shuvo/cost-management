@@ -82,17 +82,17 @@ const TypesOfCost = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="py-2 px-[20px] ">
       <h2 className="text-2xl font-bold mb-4">Types of Cost</h2>
 
-      <div className="mb-4">
+      <div className="my-[20px] uni-indput">
         <input
           type="id"
           name="id"
           value={form.id}
           onChange={handleChange}
           placeholder="id"
-          className="p-2 border rounded mr-2"
+          className="p-2 border rounded mr-2 py-[5px]"
         />
         <input
           type="text"
@@ -100,7 +100,7 @@ const TypesOfCost = () => {
           value={form.title}
           onChange={handleChange}
           placeholder="Title"
-          className="p-2 border rounded mr-2"
+          className="p-2 border rounded mr-2 py-[5px]"
         />
         <input
           type="text"
@@ -108,14 +108,14 @@ const TypesOfCost = () => {
           value={form.description}
           onChange={handleChange}
           placeholder="Description"
-          className="p-2 border rounded mr-2"
+          className="p-2 border rounded mr-2 py-[5px]"
         />
-        <button onClick={handleSubmit} className="bg-blue-500 text-white p-2 rounded">
+        <button onClick={handleSubmit} className="px-[15px] py-[6px] ml-[10px] bg-[#60a5fa] text-white p-2 border-0">
           {editingId ? "Update" : "Add"}
         </button>
       </div>
 
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="uni_table w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">ID</th> {/* Added ID column */}

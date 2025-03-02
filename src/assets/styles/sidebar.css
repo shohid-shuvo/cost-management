@@ -1,0 +1,40 @@
+/* Sidebar styles */
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background-color: #1a202c; /* Dark gray */
+    color: white;
+    padding: 20px;
+    border-top: 1px solid #555;
+  }
+  
+  .sidebar h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar nav ul li {
+    margin-bottom: 10px;
+  }
+  
+  .sidebar nav ul li a {
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+  
+  .sidebar nav ul li a:hover {
+    background-color: #2d3748; /* Darker gray */
+  }
+  

@@ -1,7 +1,7 @@
 const Header = () => {
   return (
-    <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <h1 className="text-xl font-semibold">Dashboard</h1>
+    <header className="bg-gray-800 border-b-1 border-red-400  text-white px-[12px] flex justify-between items-center">
+      <h1 className="text-xl font-semibold">Cost Management App</h1>
       <div>User Profile</div>
     </header>
   );

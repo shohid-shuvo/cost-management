@@ -96,7 +96,7 @@ const Amounts = () => {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Amounts (Expenses)</h2>
-      <div className="mb-4">
+      <div className="mb-4 uni-indput">
         <select name="type_id" value={form.type_id} onChange={handleChange} className="p-2 border rounded mr-2">
           <option value="">Select Type</option>
           {types.map((type) => (
@@ -126,7 +126,7 @@ const Amounts = () => {
         </button>
       </div>
       
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="uni_table w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Type</th>

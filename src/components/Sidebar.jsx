@@ -1,23 +1,45 @@
 import { Link } from "react-router-dom";
+import { FaTachometerAlt, FaMoneyBillWave, FaDollarSign, FaCreditCard, FaList } from "react-icons/fa"; // Import icons //modfy
+import "../assets/styles/sidebar.css"; // Import CSS //modfy
 
 const Sidebar = () => {
   return (
-    <div className="w-[250px] px-5 h-screen bg-gray-900 text-white py-4 ">
-      <div className="fixed">
-       
-        <h2 className="text-2xl font-bold mb-4">Expense Manager</h2>
-        <nav>
-          <ul className="space-y-2">
-            <li><Link to="/" className="block p-2 rounded hover:bg-gray-700">Dashboard</Link></li>
-            <li><Link to="/types-of-cost" className="block p-2 rounded hover:bg-gray-700">Types of Cost</Link></li>
-            <li><Link to="/amount" className="block p-2 rounded hover:bg-gray-700">Amount</Link></li>
-            <li><Link to="/currency" className="block p-2 rounded hover:bg-gray-700">Currency</Link></li>
-            <li><Link to="/payment-method" className="block p-2 rounded hover:bg-gray-700">Payment Method</Link></li>
-          </ul>
-        </nav>
-      </div>
-     
+    <div className="sidebar ">
+      {/* Sidebar Title */}
+      <h2 className="sidebar-title">Expense Manager</h2>
+
+      {/* Navigation */}
+      <nav>
+        <ul className="sidebar-menu">
+          <li>
+            <Link to="/">
+              <FaTachometerAlt className="menu-icon" /> Dashboard {/*modfy*/}
+            </Link>
+          </li>
+          <li>
+            <Link to="/types-of-cost">
+              <FaList className="menu-icon" /> Types of Cost {/*modfy*/}
+            </Link>
+          </li>
+          <li>
+            <Link to="/amount">
+              <FaMoneyBillWave className="menu-icon" /> Amount {/*modfy*/}
+            </Link>
+          </li>
+          <li>
+            <Link to="/currency">
+              <FaDollarSign className="menu-icon" /> Currency {/*modfy*/}
+            </Link>
+          </li>
+          <li>
+            <Link to="/payment-method">
+              <FaCreditCard className="menu-icon" /> Payment Method {/*modfy*/}
+            </Link>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 };
+
 export default Sidebar;
