@@ -1,4 +1,3 @@
-// src/pages/PaymentMethods/PaymentMethods.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -12,6 +11,8 @@ const PaymentMethods = () => {
     updated_by: "Admin",
   });
   const [editingId, setEditingId] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(""); // State for success/error alert
+  const [isError, setIsError] = useState(false); // State to track if the alert is an error
 
   // Fetch data from API
   useEffect(() => {
@@ -30,8 +31,24 @@ const PaymentMethods = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Validate form fields
+  const validateForm = () => {
+    if (!form.title.trim() || !form.description.trim()) {
+      setAlertMessage("Title and Description are required!"); // Error message
+      setIsError(true); // Set alert as error
+      setTimeout(() => {
+        setAlertMessage("");
+        setIsError(false);
+      }, 2000); // Hide alert after 2 seconds
+      return false; // Validation failed
+    }
+    return true; // Validation passed
+  };
+
   // Create or Update payment method
   const handleSubmit = () => {
+    if (!validateForm()) return; // Stop if validation fails
+
     const payload = {
       ...form,
       id: editingId, // Include ID for update
@@ -58,10 +75,14 @@ const PaymentMethods = () => {
             created_by: "Admin",
             updated_by: "Admin",
           });
+          setAlertMessage("Payment method updated successfully!"); // Success alert for update
+          setIsError(false); // Set alert as success
         })
-        .catch((error) =>
-          console.error("Error updating payment method:", error.response ? error.response.data : error.message)
-        );
+        .catch((error) => {
+          console.error("Error updating payment method:", error.response ? error.response.data : error.message);
+          setAlertMessage("Failed to update payment method!"); // Error alert
+          setIsError(true); // Set alert as error
+        });
     } else {
       // Create new payment method
       axios
@@ -80,19 +101,43 @@ const PaymentMethods = () => {
             created_by: "Admin",
             updated_by: "Admin",
           });
+          setAlertMessage("Payment method added successfully!"); // Success alert for add
+          setIsError(false); // Set alert as success
         })
-        .catch((error) =>
-          console.error("Error creating payment method:", error.response ? error.response.data : error.message)
-        );
+        .catch((error) => {
+          console.error("Error creating payment method:", error.response ? error.response.data : error.message);
+          setAlertMessage("Failed to add payment method!"); // Error alert
+          setIsError(true); // Set alert as error
+        });
     }
+
+    // Hide the alert after 2 seconds
+    setTimeout(() => {
+      setAlertMessage("");
+      setIsError(false);
+    }, 2000);
   };
 
   // Delete payment method
   const handleDelete = (id) => {
     axios
       .post("http://localhost/dailyexpense_api/api/payment_methods/delete_payment_method.php", { id })
-      .then(() => fetchData())
-      .catch((error) => console.error("Error deleting payment method:", error));
+      .then(() => {
+        fetchData();
+        setAlertMessage("Payment method deleted successfully!"); // Success alert for delete
+        setIsError(false); // Set alert as success
+      })
+      .catch((error) => {
+        console.error("Error deleting payment method:", error);
+        setAlertMessage("Failed to delete payment method!"); // Error alert
+        setIsError(true); // Set alert as error
+      });
+
+    // Hide the alert after 2 seconds
+    setTimeout(() => {
+      setAlertMessage("");
+      setIsError(false);
+    }, 2000);
   };
 
   // Edit payment method (populate form)
@@ -112,6 +157,13 @@ const PaymentMethods = () => {
 
   return (
     <div className="p-4">
+      {/* Alert */}
+      {alertMessage && (
+        <div className={`p-4 mb-4 rounded ${isError ? "uni_danger_alert" : "uni_success_alert"} text-white`}>
+          {alertMessage}
+        </div>
+      )}
+
       <h2 className="text-2xl font-bold mb-4">Payment Methods</h2>
 
       <div className="mb-4 uni-indput">
@@ -122,6 +174,7 @@ const PaymentMethods = () => {
           onChange={handleChange}
           placeholder="Title"
           className="p-2 border rounded mr-2"
+          required
         />
         <input
           type="text"
@@ -130,6 +183,7 @@ const PaymentMethods = () => {
           onChange={handleChange}
           placeholder="Description"
           className="p-2 border rounded mr-2"
+          required
         />
         <select
           name="status"
@@ -145,10 +199,10 @@ const PaymentMethods = () => {
         </button>
       </div>
 
-      <table className=" uni_table w-full border-collapse border border-gray-300">
+      <table className="uni_table w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="border p-2">id</th>
+            <th className="border p-2">ID</th>
             <th className="border p-2">Title</th>
             <th className="border p-2">Description</th>
             <th className="border p-2">Status</th>

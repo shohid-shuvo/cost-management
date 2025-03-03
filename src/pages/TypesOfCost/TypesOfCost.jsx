@@ -1,4 +1,3 @@
-// src/pages/TypesOfCost/TypesOfCost.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -6,6 +5,8 @@ const TypesOfCost = () => {
   const [types, setTypes] = useState([]);
   const [form, setForm] = useState({ title: "", description: "", status: "active", updated_by: "admin" });
   const [editingId, setEditingId] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(""); // State for success/error alert
+  const [isError, setIsError] = useState(false); // State to track if the alert is an error
 
   // Fetch data from API
   useEffect(() => {
@@ -24,18 +25,32 @@ const TypesOfCost = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Validate form fields
+  const validateForm = () => {
+    if (!form.title.trim() || !form.description.trim()) {
+      setAlertMessage("Title and Description are required!"); // Error message
+      setIsError(true); // Set alert as error
+      setTimeout(() => {
+        setAlertMessage("");
+        setIsError(false);
+      }, 2000); // Hide alert after 2 seconds
+      return false; // Validation failed
+    }
+    return true; // Validation passed
+  };
+
   // Create or Update type
   const handleSubmit = () => {
+    if (!validateForm()) return; // Stop if validation fails
+
     const payload = {
-      id: editingId, // modfy: add ID in Json 
+      id: editingId, // Include ID for update
       title: form.title,
       description: form.description,
       status: form.status,
       updated_by: "admin",
     };
-  
-    // console.log("Payload being sent:", payload); // Debugging log
-  
+
     if (editingId) {
       axios
         .post(
@@ -48,8 +63,14 @@ const TypesOfCost = () => {
           fetchData();
           setEditingId(null);
           setForm({ title: "", description: "", status: "active", updated_by: "admin" });
+          setAlertMessage("Type updated successfully!"); // Success alert for update
+          setIsError(false); // Set alert as success
         })
-        .catch((error) => console.error("Error updating type:", error.response ? error.response.data : error.message));
+        .catch((error) => {
+          console.error("Error updating type:", error.response ? error.response.data : error.message);
+          setAlertMessage("Failed to update type!"); // Error alert
+          setIsError(true); // Set alert as error
+        });
     } else {
       axios
         .post(
@@ -61,18 +82,43 @@ const TypesOfCost = () => {
           console.log("Create Response:", response.data);
           fetchData();
           setForm({ title: "", description: "", status: "active", updated_by: "admin" });
+          setAlertMessage("Type added successfully!"); // Success alert for add
+          setIsError(false); // Set alert as success
         })
-        .catch((error) => console.error("Error creating type:", error.response ? error.response.data : error.message));
+        .catch((error) => {
+          console.error("Error creating type:", error.response ? error.response.data : error.message);
+          setAlertMessage("Failed to add type!"); // Error alert
+          setIsError(true); // Set alert as error
+        });
     }
+
+    // Hide the alert after 2 seconds
+    setTimeout(() => {
+      setAlertMessage("");
+      setIsError(false);
+    }, 2000);
   };
-  
 
   // Delete type
   const handleDelete = (id) => {
     axios
       .post("http://localhost/dailyexpense_api/api/types_of_cost/delete_type.php", { id })
-      .then(() => fetchData())
-      .catch((error) => console.error("Error deleting type:", error));
+      .then(() => {
+        fetchData();
+        setAlertMessage("Type deleted successfully!"); // Success alert for delete
+        setIsError(false); // Set alert as success
+      })
+      .catch((error) => {
+        console.error("Error deleting type:", error);
+        setAlertMessage("Failed to delete type!"); // Error alert
+        setIsError(true); // Set alert as error
+      });
+
+    // Hide the alert after 2 seconds
+    setTimeout(() => {
+      setAlertMessage("");
+      setIsError(false);
+    }, 2000);
   };
 
   // Edit type (populate form)
@@ -82,18 +128,17 @@ const TypesOfCost = () => {
   };
 
   return (
-    <div className="py-2 px-[20px] ">
+    <div className="py-2 px-[20px]">
+      {/* Alert */}
+      {alertMessage && (
+        <div className={`p-4 mb-4 rounded ${isError ? "uni_danger_alert" : "uni_success_alert"} text-white`}>
+          {alertMessage}
+        </div>
+      )}
+
       <h2 className="text-2xl font-bold mb-4">Types of Cost</h2>
 
-      <div className="my-[20px] uni-indput">
-        <input
-          type="id"
-          name="id"
-          value={form.id}
-          onChange={handleChange}
-          placeholder="id"
-          className="p-2 border rounded mr-2 py-[5px]"
-        />
+      <div className="uni-indput">
         <input
           type="text"
           name="title"
@@ -101,6 +146,7 @@ const TypesOfCost = () => {
           onChange={handleChange}
           placeholder="Title"
           className="p-2 border rounded mr-2 py-[5px]"
+          required
         />
         <input
           type="text"
@@ -109,6 +155,7 @@ const TypesOfCost = () => {
           onChange={handleChange}
           placeholder="Description"
           className="p-2 border rounded mr-2 py-[5px]"
+          required
         />
         <button onClick={handleSubmit} className="px-[15px] py-[6px] ml-[10px] bg-[#60a5fa] text-white p-2 border-0">
           {editingId ? "Update" : "Add"}
@@ -118,7 +165,7 @@ const TypesOfCost = () => {
       <table className="uni_table w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            <th className="border p-2">ID</th> {/* Added ID column */}
+            <th className="border p-2">ID</th>
             <th className="border p-2">Title</th>
             <th className="border p-2">Description</th>
             <th className="border p-2">Actions</th>
@@ -127,7 +174,7 @@ const TypesOfCost = () => {
         <tbody>
           {types.map((type) => (
             <tr key={type.id}>
-              <td className="border p-2">{type.id}</td> {/* Display ID */}
+              <td className="border p-2">{type.id}</td>
               <td className="border p-2">{type.title}</td>
               <td className="border p-2">{type.description}</td>
               <td className="border p-2">

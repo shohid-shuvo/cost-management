@@ -1,4 +1,3 @@
-// src/pages/Currency/Currency.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -13,6 +12,7 @@ const Currency = () => {
     updated_by: "Admin",
   });
   const [editingId, setEditingId] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(""); // State for success alert
 
   // Fetch data from API
   useEffect(() => {
@@ -60,6 +60,7 @@ const Currency = () => {
             created_by: "Admin",
             updated_by: "Admin",
           });
+          setAlertMessage("Currency updated successfully!"); // Success alert for update
         })
         .catch((error) =>
           console.error("Error updating currency:", error.response ? error.response.data : error.message)
@@ -83,19 +84,33 @@ const Currency = () => {
             created_by: "Admin",
             updated_by: "Admin",
           });
+          setAlertMessage("Currency added successfully!"); // Success alert for add
         })
         .catch((error) =>
           console.error("Error creating currency:", error.response ? error.response.data : error.message)
         );
     }
+
+    // Hide the alert after 2 seconds
+    setTimeout(() => {
+      setAlertMessage("");
+    }, 2000);
   };
 
   // Delete currency
   const handleDelete = (id) => {
     axios
       .post("http://localhost/dailyexpense_api/api/currency/delete_currency.php", { id })
-      .then(() => fetchData())
+      .then(() => {
+        fetchData();
+        setAlertMessage("Currency deleted successfully!"); // Success alert for delete
+      })
       .catch((error) => console.error("Error deleting currency:", error));
+
+    // Hide the alert after 2 seconds
+    setTimeout(() => {
+      setAlertMessage("");
+    }, 2000);
   };
 
   // Edit currency (populate form)
@@ -113,6 +128,13 @@ const Currency = () => {
 
   return (
     <div className="p-4">
+      {/* Success Alert */}
+      {alertMessage && (
+        <div className="uni_success_alert bg-green-500 text-white p-4 mb-4 rounded">
+          {alertMessage}
+        </div>
+      )}
+
       <h2 className="text-2xl font-bold mb-4">Currencies</h2>
 
       <div className="mb-4 uni-indput">
