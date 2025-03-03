@@ -1,10 +1,10 @@
-// src/pages/FrontPage/FrontPage.jsx
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Home = () => {
   const [combinedData, setCombinedData] = useState([]);
   const [form, setForm] = useState({
+    id: null, // Add ID for editing
     subject: "",
     amount: "",
     currency: "",
@@ -13,7 +13,7 @@ const Home = () => {
   const [types, setTypes] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
-  const [amounts, setAmounts] = useState([]); // modfy: Store amounts separately
+  const [amounts, setAmounts] = useState([]);
 
   // Fetch data from all APIs
   useEffect(() => {
@@ -22,9 +22,9 @@ const Home = () => {
 
   useEffect(() => {
     if (types.length > 0 && amounts.length > 0) {
-      updateCombinedData(); // modfy: Update combinedData when types are loaded
+      updateCombinedData();
     }
-  }, [types, currencies, paymentMethods]); // modfy: Update when dependencies change
+  }, [types, currencies, paymentMethods, amounts]);
 
   const fetchData = async () => {
     try {
@@ -37,7 +37,7 @@ const Home = () => {
         ]);
 
       setTypes(typesResponse.data);
-      setAmounts(amountsResponse.data); // modfy: Save amounts separately
+      setAmounts(amountsResponse.data);
       setCurrencies(currenciesResponse.data);
       setPaymentMethods(paymentMethodsResponse.data);
     } catch (error) {
@@ -45,13 +45,14 @@ const Home = () => {
     }
   };
 
-  const updateCombinedData = () => { // modfy: Separate function for data combination
+  const updateCombinedData = () => {
     const combined = amounts.map((amount) => {
-      const type = types.find((t) => Number(t.id) === Number(amount.type_id)); // modfy: Ensure matching ID type
+      const type = types.find((t) => Number(t.id) === Number(amount.type_id));
       const currency = currencies.find((c) => Number(c.id) === Number(amount.currency_id));
       const paymentMethod = paymentMethods.find((p) => Number(p.id) === Number(amount.payment_method_id));
 
       return {
+        id: amount.id, // Include ID for editing and deleting
         subject: type ? type.title : "N/A",
         amount: amount.amount,
         currency: currency ? currency.short_name : "N/A",
@@ -80,6 +81,7 @@ const Home = () => {
     }
 
     const payload = {
+      id: form.id, // Include ID for update
       type_id: type.id,
       amount: form.amount,
       currency_id: currency.id,
@@ -90,33 +92,61 @@ const Home = () => {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost/dailyexpense_api/api/add_expense.php",
-        payload,
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      console.log("Data submitted successfully:", response.data);
+      if (form.id) {
+        // Update existing expense
+        await axios.post(
+          "http://localhost/dailyexpense_api/api/update_expense.php",
+          payload,
+          { headers: { "Content-Type": "application/json" } }
+        );
+      } else {
+        // Add new expense
+        await axios.post(
+          "http://localhost/dailyexpense_api/api/add_expense.php",
+          payload,
+          { headers: { "Content-Type": "application/json" } }
+        );
+      }
 
       setForm({
+        id: null,
         subject: "",
         amount: "",
         currency: "",
         paymentMethod: "",
       });
 
-      fetchData();
+      fetchData(); // Refresh data
     } catch (error) {
       console.error("Error submitting data:", error.response ? error.response.data : error.message);
     }
   };
 
+  const handleEdit = (row) => {
+    setForm({
+      id: row.id,
+      subject: row.subject,
+      amount: row.amount,
+      currency: row.currency,
+      paymentMethod: row.paymentMethod,
+    });
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.post("http://localhost/dailyexpense_api/api/delete_expense.php", { id });
+      fetchData(); // Refresh data
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    }
+  };
+
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Combined Data</h2>
+      <h2 className="text-2xl font-bold mb-4">Manage your Expense</h2>
 
       <form onSubmit={handleSubmit} className="uni-indput mb-4">
-        <div className=" grid grid-cols-5 gap-[10px] ">
+        <div className="grid grid-cols-5 gap-[10px]">
           <div>
             <label className="block text-sm font-medium mb-1">Subject</label>
             <select
@@ -185,7 +215,7 @@ const Home = () => {
               type="submit"
               className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
             >
-              Add Expense
+              {form.id ? "Update" : "Add"} Expense
             </button>
           </div>
         </div>
@@ -198,15 +228,30 @@ const Home = () => {
             <th className="border p-2">Amount</th>
             <th className="border p-2">Currency</th>
             <th className="border p-2">Payment Method</th>
+            <th className="border p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {combinedData.map((row, index) => (
-            <tr key={index}>
+          {combinedData.map((row) => (
+            <tr key={row.id}>
               <td className="border p-2">{row.subject}</td>
               <td className="border p-2">{row.amount}</td>
               <td className="border p-2">{row.currency}</td>
               <td className="border p-2">{row.paymentMethod}</td>
+              <td className="border p-2">
+                <button
+                  onClick={() => handleEdit(row)}
+                  className="bg-yellow-500 text-white p-1 rounded mr-2"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(row.id)}
+                  className="bg-red-500 text-white p-1 rounded"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
