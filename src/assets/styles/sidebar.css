@@ -38,4 +38,10 @@
   .sidebar nav ul li a:hover {
     background-color: #2d3748; /* Darker gray */
   }
+
+  .sidebar nav ul li a svg{
+    display: inline;
+    margin-right: 5px;
+    margin-top: -3px;
+  }
   
