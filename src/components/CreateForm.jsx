@@ -20,7 +20,7 @@ const CreateForm = ({ expenseToEdit, closeForm }) => {
         note: expenseToEdit.note,
       });
     }
-  }, [expenseToEdit]);
+  }, [expenseToEdit]);  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
