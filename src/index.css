@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+main{
+  padding: 0 20px;
+}
+
+.uni_table{
+  background:#f6ffca;
+}
+.uni_table tr th, .uni_table tr td {
+  padding: 5px 10px;
+}
+.uni_table button{
+  background: #85d9ff;
+  border: 0;
+  padding: 5px 10px;
+  border-radius: 2px;
+  margin-right: 7px;
+}
+.uni_table button.bg-red-500{
+  background: #ff1e1e;
+  color: #fff;
+}
+
+.uni-indput input, .uni-indput select{
+  padding: 12px;
+    padding-left: 10px;
+    margin-right: 8px;
+    background: #fff52c;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #333 !important;
+    line-height: 1.3;
+}
+.uni-indput input{
+  background: #fff42cd5;
+}
+.uni-indput button{
+  padding: 12px 30px;
+    background: green;
+    color: #fff;
+    text-transform: uppercase;
+}
+.uni-indput button:hover{
+    background: rgba(0, 128, 0, 0.801) !important;
+}
+
+.uni_success_alert{
+  background: green;
+  color: #fff;
+  padding: 11px 15px;
+  display: inline;
+  position: absolute;
+  right: 21px;
+  animation: success_alert .5s infinite;
+}
+.uni_danger_alert{
+  background: rgb(255, 18, 18);
+  color: #fff;
+  padding: 11px 15px;
+  display: inline;
+  position: absolute;
+  right: 21px;
+  animation: success_alert .5s infinite;
+}
+@keyframes success_alert {
+  0% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+body {
+  margin: 0;
+}
